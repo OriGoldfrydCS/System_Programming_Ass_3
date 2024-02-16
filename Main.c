@@ -1,7 +1,7 @@
-#include "StrList.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "StrList.h"
 
 int main() 
 {
@@ -67,7 +67,7 @@ int main()
                 printf("String at index %d: %s\n", index, StrList_getAtIndex(list, index));
                 break;
             case 6:
-                numChars = StrList_totalChars(list);
+                numChars = StrList_printLen(list);
                 printf("Total characters in the list: %zu\n", numChars);
                 break;
             case 7:

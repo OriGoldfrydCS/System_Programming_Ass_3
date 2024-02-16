@@ -112,6 +112,12 @@ void StrList_sort( StrList* StrList);
 int StrList_isSorted(StrList* StrList);
 
 
-/////// Other Assistance Functions /////////
+/*----------------------------------------------------------*/
+/*----------------------------------------------------------*/
+/* Auxiliary Functions & Structs                            */ 
+/*----------------------------------------------------------*/
+/*----------------------------------------------------------*/
+struct Node;
+typedef struct Node Node;
+Node* newNode(const char* data);
 char* StrList_getAtIndex(const StrList* StrList, int index);
-size_t StrList_totalChars(const StrList* StrList);
