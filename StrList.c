@@ -31,7 +31,7 @@ typedef struct _StrList StrList;
 StrList* StrList_alloc() 
 {
     StrList* string_list = (StrList*)malloc(sizeof(StrList));       // Allocates for a string_list with a size of StrList structure, as defined
-    if(string_list == NULL)                                         // This "if-statement" check whether the memory allocated successfully 
+    if(string_list == NULL)                                                 // This "if-statement" check whether the memory allocated successfully 
     {
         return NULL;
     }
@@ -39,6 +39,7 @@ StrList* StrList_alloc()
     // Initialize the string_list properties when initialized to prevent mistakes in future
     string_list->head = NULL;
     string_list->size = 0;
+    
     return string_list;
 }
 
@@ -404,8 +405,8 @@ StrList* StrList_clone(const StrList* StrList)
         return NULL;
     }
 
-    Node* cloned = (Node*)malloc(sizeof(StrList));
-
+    Node* cloned = StrList_alloc();
+    
     // Check if allocation succeeded or not
     if (cloned == NULL)
     {
@@ -521,7 +522,7 @@ int StrList_isSorted(StrList* StrList)
 /*This function creates a new string node*/
 Node* newNode(const char* data) 
 {
-    Node* newNode = (Node*)malloc(sizeof(newNode));   // Allocate memory for the new string node
+    Node* newNode = (Node*)malloc(sizeof(Node));   // Allocate memory for the new string node
     if (newNode == NULL)                              // Check if memory allocation succeeded or not
     {
         return NULL;
