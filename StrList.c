@@ -18,7 +18,7 @@ typedef struct Node
 struct _StrList 
 {
     Node* head;
-    size_t size;
+    unsigned int size;
 };
 
 typedef struct _StrList StrList;
@@ -31,7 +31,7 @@ typedef struct _StrList StrList;
 StrList* StrList_alloc() 
 {
     StrList* string_list = (StrList*)malloc(sizeof(StrList));       // Allocates for a string_list with a size of StrList structure, as defined
-    if(string_list == NULL)                                                 // This "if-statement" check whether the memory allocated successfully 
+    if(string_list == NULL)                                         // This "if-statement" check whether the memory allocated successfully 
     {
         return NULL;
     }
@@ -211,7 +211,7 @@ void StrList_print(const StrList* StrList)
     Node* current = StrList->head;          // Pull-out" the pointer of the StrList's head
     while(current != NULL)                  // Go through all nodes untill the end of the StrList 
     {
-        printf("%s\n", current->data);      // Print the data
+        printf("%s ", current->data);      // Print the data
         current = current->next;            // Move to pointer to the next string node
     }
 }
@@ -397,6 +397,9 @@ int StrList_isEqual(const StrList* StrList1, const StrList* StrList2)
 /*-----------------------------------------------------------*/
 /* This function clones the given StrList                    */
 /*-----------------------------------------------------------*/
+// Global variable
+StrList* cloned_list;
+
 StrList* StrList_clone(const StrList* StrList)
 {
     // Initial check: if StrList does not exist, clone cannot be performed
@@ -405,10 +408,10 @@ StrList* StrList_clone(const StrList* StrList)
         return NULL;
     }
 
-    Node* cloned = StrList_alloc();
+    cloned_list = StrList_alloc();
     
     // Check if allocation succeeded or not
-    if (cloned == NULL)
+    if (cloned_list == NULL)
     {
         return NULL;     
     }
@@ -417,11 +420,11 @@ StrList* StrList_clone(const StrList* StrList)
     while(current != NULL) 
     {
         // Use a hypothetical StrList_insertLast function to add each node's data to the clone
-        StrList_insertLast(cloned, current->data);
+        StrList_insertLast(cloned_list, current->data);
         current = current->next;
     }
 
-    return cloned;
+    return cloned_list;
 }
 
 
