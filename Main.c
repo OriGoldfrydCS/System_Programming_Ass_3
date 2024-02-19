@@ -5,9 +5,9 @@
 
 int main() 
 {
-    StrList* StrList = StrList_alloc(); // Allocate memory for the user's story 
+    StrList* StrList = StrList_alloc();  // Allocate memory for the user's story 
     char words[300];                     // A buffer for the user's word or sentence input for his story
-    int decision;                       // A variable for the user decision what option to choose in the menu
+    int decision;                        // A variable for the user decision what option to choose in the menu
 
     while(1) 
     {
@@ -35,7 +35,7 @@ int main()
         getchar(); 
 
 
-        // Handle you user's decision
+        // Handle the user's decision
         switch (decision) 
         {
             // (1) Build your story by inserting word or sentence at the end
@@ -63,7 +63,6 @@ int main()
             
             // (3) Print your story
             case 3:
-                printf("Your story:\n%zu", StrList_size(StrList));
                 StrList_print(StrList);
                 break;
             
@@ -144,7 +143,7 @@ int main()
             // (0) Exit the program
             case 0:
                 StrList_free(StrList);                       // Free the entire StrList  
-                printf("Exiting...\n");
+                printf("Good Bye :)\n");
                 return 0;
             
             // Dafault case

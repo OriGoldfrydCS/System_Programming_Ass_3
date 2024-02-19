@@ -2,7 +2,7 @@
 CC = gcc
 FLAGS = -Wall 
 
-# Default target: compile all programs
+# Default target: compile all programs (StrList)
 all: StrList
 
 # Program file compiling rules

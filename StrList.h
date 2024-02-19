@@ -117,7 +117,19 @@ int StrList_isSorted(StrList* StrList);
 /* Auxiliary Functions and Struct                           */ 
 /*----------------------------------------------------------*/
 /*----------------------------------------------------------*/
+
+/*
+ * This structure represents a string within the StrList 
+ */
 struct Node;
 typedef struct Node Node;
+
+/*
+ * This function creates a new string node
+ */
 Node* newNode(const char* data);
+
+/*
+ * This functions return the data at a specific node in StrList
+ */
 char* StrList_getAtIndex(const StrList* StrList, int index);
