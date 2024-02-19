@@ -40,14 +40,45 @@ int main()
         {
             // (1) Build your story by inserting word or sentence at the end
             case 1:
-                printf("Type word or sentence for your story: ");
-                fgets(words, sizeof(words), stdin);          // Read the input from terminal
-                int length = strlen(words);                 
-                if(length > 0 && words[length-1] == '\n')    // Remove new line (if needed) by replacing '\n' with '\0'
+                printf("Insert a word to your story. If you wish to add several words first type 'A': ");
+                fgets(words, sizeof(words), stdin);             // Read the input
+                if (words[0] == 'A' || words[0] == 'a')         // Check if the input starts with 'A'
                 {
-                    words[length-1] = '\0';
+                    int numberOfWords;
+                    printf("How many words do you want to add? ");
+                    if(scanf("%d", &numberOfWords) != 1)        // Handle invalid input from the user
+                    {
+                        
+                        printf("Invalid number. Please start over.\n");
+                        while ((getchar()) != '\n');            // Remove new line (if needed)
+                        break;
+                    }
+
+                    while((getchar()) != '\n');                // Clear the input buffer
+
+                    printf("Enter the words you wish to insert separated by spaces: ");
+                    fgets(words, sizeof(words), stdin); // Read the sequence of words
+
+                    // Split the input string by spaces and insert each word into the list
+                    char* word = strtok(words, " \n");          // the function strtok is used to split the string by spaces and new line
+                    while(word != NULL) 
+                    {
+                        StrList_insertLast(StrList, word);      // Insert each word into the list
+                        word = strtok(NULL, " \n");             // Get the next word
+                    }
+                } 
+                else 
+                {
+                    // Handle single word or sentence insertion
+                    // Check and remove newline character at the end if present
+                    int length = strlen(words);
+                    if(length > 0 && words[length - 1] == '\n') 
+                    {
+                        words[length - 1] = '\0';
+                    }
+
+                    StrList_insertLast(StrList, words);         // Insert the single word or sentence into the list
                 }
-                StrList_insertLast(StrList, words);
                 break;
             
             // (2) Insert your word or sentence at a spcific index
