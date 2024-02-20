@@ -59,10 +59,11 @@ void StrList_free(StrList* StrList)
     Node* thisNode = StrList->head;      // Set the StrList's pointer to a variable
     while(thisNode)                      // Go through all nodes and free: (1) the node's data; (2) the memory allocated to that node (string) as a structure
     {
-        Node* mid_node = thisNode;
-        thisNode = thisNode->next;
+        Node* mid_node = thisNode->next;
         free(mid_node->data);
         free(mid_node);
+        thisNode = mid_node;
+
     }
     free(StrList);
 }
@@ -206,18 +207,21 @@ void StrList_print(const StrList* StrList)
     // Initial check for valitidy
     if(StrList == NULL || StrList->head == NULL) 
     {
-        printf("StrList is empty with strings\n");
         return;
     }
-
-    printf("The story is:\n");
     
     Node* thisNode = StrList->head;          // Pull-out" the pointer of the StrList's head
     while(thisNode != NULL)                  // Go through all nodes untill the end of the StrList 
     {
-        printf("%s ", thisNode->data);        // Print the data
+        printf("%s", thisNode->data);        // Print the data
         thisNode = thisNode->next;           // Move to pointer to the next string node
+
+        if(thisNode != NULL)
+        {
+            printf(" ");
+        }
     }
+    printf("\n");
 }
 
 
@@ -252,7 +256,6 @@ int StrList_printLen(const StrList* StrList)
     // Initial check for valitidy. If conditions meet, return an amount of zero
     if(StrList == NULL || StrList->head == NULL) 
     {
-        printf("StrList is empty with strings\n");
         return 0;
     }
 
@@ -309,11 +312,11 @@ void StrList_remove(StrList* StrList, const char* data)
 
     while(*current != NULL) 
     {
-        if (strcmp((*current)->data, data) == 0)    // compare the given string (data) to the data of the current node
+        if (strcmp((*current)->data, data) == 0)   // compare the given string (data) to the data of the current node
         {
             node_to_remove = *current;             // Assign the current node to node_to_remove 
             *current = (*current)->next;           // Connect the previous node the the next node
-            free(node_to_remove->data);             // free the memory of the node_to_remove's data
+            free(node_to_remove->data);            // free the memory of the node_to_remove's data
             free(node_to_remove);                  // free the memory of node_to_remove (means remove it)
             StrList->size--;                       // Resize the StrList
         } 
@@ -527,13 +530,22 @@ int StrList_isSorted(StrList* StrList)
 /*This function creates a new string node*/
 Node* newNode(const char* data) 
 {
-    Node* newNode = (Node*)malloc(sizeof(Node));      // Allocate memory for the new string node
-    if (newNode == NULL)                              // Check if memory allocation succeeded or not
+    Node* newNode = (Node*)malloc(sizeof(Node)); // Allocate memory for the new node
+    if (newNode == NULL)         // Check if memory allocation succeeded or not
     {
         return NULL;
-    } 
-    newNode->data = strdup(data);                       // use strdup to copy the string's data
-    newNode->next = NULL;                             // Initiate the next pointer to null
+    }
+    
+    // Allocate memory for the string data
+    newNode->data = (char*)malloc(strlen(data) + 1); // +1 for the null terminator
+    if (newNode->data == NULL)   // Check if string memory allocation succeeded
+    {
+        free(newNode);           // If string allocation failed, clean up the node allocation before returning
+        return NULL;
+    }
+
+    strcpy(newNode->data, data); // Copy the string data into the newly allocated memory
+    newNode->next = NULL;        // Initialize the next pointer to null
     return newNode;
 }
 

@@ -119,7 +119,7 @@ int StrList_isSorted(StrList* StrList);
 /*----------------------------------------------------------*/
 
 /*
- * This structure represents a string within the StrList 
+ * This structure represents a string in a StrList 
  */
 struct Node;
 typedef struct Node Node;
