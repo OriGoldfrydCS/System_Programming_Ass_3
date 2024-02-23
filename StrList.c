@@ -51,23 +51,21 @@ StrList* StrList_alloc()
 void StrList_free(StrList* StrList) 
 {
     // if a pointer to StrList does not exists, nothing to be done regarding freeing memory
-    if(StrList == NULL)       
+    if(StrList != NULL)       
     {
-            return;
-    } 
-
-    Node* thisNode = StrList->head;      // Set the StrList's pointer to a variable
-    while(thisNode)                      // Go through all nodes and free: (1) the node's data; (2) the memory allocated to that node (string) as a structure
-    {
-        Node* mid_node = thisNode->next;
-        free(mid_node->data);
-        free(mid_node);
-        thisNode = mid_node;
-
+        Node* thisNode = StrList->head;      // Set the StrList's pointer to a variable
+        Node* nextNode = NULL;               // Use nextNode to hold the next node
+        while(thisNode)                      // Go through all nodes and free: (1) the node's data; (2) the memory allocated to that node (string) as a structure
+        {
+            nextNode = thisNode->next;
+            free(thisNode->data);
+            free(thisNode);
+            thisNode = nextNode;
+        }
+        free(StrList);
     }
-    free(StrList);
+    
 }
-
 
 /*----------------------------------------------------------*/
 /* This function returns the StrList's size                 */
@@ -80,7 +78,7 @@ size_t StrList_size(const StrList* StrList)
     }
 
     int size = StrList->size;
-    return size;   // Else, return property "size" that stores the StrList
+    return size;   
 }
 
 
@@ -112,12 +110,12 @@ void StrList_insertLast(StrList* StrList, const char* data)
     // Place the new node at the end of the StrList
     else 
     {
-        Node* thisNode = StrList->head;      // Store the current head node
-        while(thisNode->next)                // Go through all nodes and place the new node after the first node which it next is null (means it is the last one at that time)
+        Node* thisNode = StrList->head;     // Store the current head node
+        while(thisNode->next)               // Go through all nodes and place the new node after the first node which it next is null (means it is the last one at that time)
         {
             thisNode = thisNode->next;
         }
-        thisNode->next = InsertedNode;               // Place the new node at the end
+        thisNode->next = InsertedNode;      // Place the new node at the end
     }
     StrList->size++;                        // Resize the StrList
 }
@@ -183,7 +181,7 @@ void StrList_insertAt(StrList* StrList, const char* data, int index)
 char* StrList_firstData(const StrList* StrList)
 {
     // Initial check: if the pointer to StrList or the head is null, return nothing
-    if(StrList->head == NULL || StrList == NULL)
+    if(StrList == NULL || StrList->head == NULL)
     {
         return NULL;
     }
@@ -207,6 +205,7 @@ void StrList_print(const StrList* StrList)
     // Initial check for valitidy
     if(StrList == NULL || StrList->head == NULL) 
     {
+        printf("\n");
         return;
     }
     
@@ -231,9 +230,8 @@ void StrList_print(const StrList* StrList)
 void StrList_printAt(const StrList* StrList, int index) 
 {
     // Check if the given index is out of bounds
-    if(index < 0 || index >= StrList->size) 
+    if(StrList == NULL || index < 0 || index >= StrList->size) 
     {
-        printf("The givne index is out of bounds\n");
         return;
     }
 
@@ -265,7 +263,7 @@ int StrList_printLen(const StrList* StrList)
     while(thisNode)
     {
         total_chars += strlen(thisNode->data);   // Add the amount of chars in the specific string (by using strlen) to the counter
-        thisNode = thisNode->next;              // Move the pointer to the next string node
+        thisNode = thisNode->next;               // Move the pointer to the next string node
     }
     
     return total_chars;
@@ -292,9 +290,9 @@ int StrList_count(StrList* StrList, const char* data)
     {
         if (strcmp(thisNode->data, data) == 0)   // compare the given string (data) to the data of the current node
         {
-            instances++;                        // Increment the counter
+            instances++;                         // Increment the counter
         }
-        thisNode = thisNode->next;              // Move the pointer to the next string node
+        thisNode = thisNode->next;               // Move the pointer to the next string node
     }
 
     return instances;
@@ -307,6 +305,11 @@ int StrList_count(StrList* StrList, const char* data)
 /*-----------------------------------------------------------*/
 void StrList_remove(StrList* StrList, const char* data) 
 {
+    if(StrList == NULL || data == NULL)    
+    {
+        return;
+    }
+
     Node **current = &StrList->head;        // Initiate a pointer to the StrList head's pointer
     Node *node_to_remove = NULL;            // Prepare a pointer the removed node
 
@@ -334,9 +337,9 @@ void StrList_remove(StrList* StrList, const char* data)
 void StrList_removeAt(StrList* StrList, int index) 
 {
     // Check if the given index is out of bounds
-    if(index < 0 || index >= StrList->size || StrList == NULL) 
+    if(StrList == NULL || index < 0 || index >= StrList->size) 
     {
-        return; // Out of bounds
+        return; 
     }
 
     Node *thisNode = StrList->head;     // A temporary pointer to the StrList's head
@@ -345,9 +348,11 @@ void StrList_removeAt(StrList* StrList, int index)
     // Case 1: remove the first string node
     if(index == 0) 
     {
-        StrList->head = thisNode->next;     // heads will point to the next node of tmp
+        Node *headOfStr = StrList->head;
+        StrList->head = StrList->head->next;
+        free(headOfStr->data);
+        free(headOfStr);
     } 
-
     // Case 2: remove a string node in the middle or at the end of the StrList
     else
     {
@@ -363,10 +368,11 @@ void StrList_removeAt(StrList* StrList, int index)
         }
 
         prev->next = thisNode->next;         // Update the next string node of prev node
-    }
 
-    free(thisNode->data);    // Free memory
-    free(thisNode);
+        free(thisNode->data);    // Free memory
+        free(thisNode);
+    }
+    
     StrList->size--;        // Resize the StrList
 }
 
@@ -377,6 +383,11 @@ void StrList_removeAt(StrList* StrList, int index)
 /*-----------------------------------------------------------*/
 int StrList_isEqual(const StrList* StrList1, const StrList* StrList2)
 {
+    if(StrList1 == NULL || StrList2 == NULL)
+    {
+        return 1;
+    }
+
     Node* thisNode1 = StrList1->head;        // Initiate a pointer to the StrList1 head's pointer 
     Node* thisNode2 = StrList2->head;        // Initiate a pointer to the StrList2 head's pointer
 
@@ -440,9 +451,14 @@ StrList* StrList_clone(const StrList* StrList)
 /*-----------------------------------------------------------*/
 void StrList_reverse(StrList* StrList) 
 {
-   Node *prev = NULL;               // Initiate a variable to store a pointer to the previous node
-   Node *thisNode = StrList->head;  // Initiate a pointer to the StrList head's pointer   
-   Node *next = NULL;               // Initiate a variable to store a pointer to the next node
+    if(StrList == NULL)
+    {
+        return;
+    }
+    
+    Node *prev = NULL;               // Initiate a variable to store a pointer to the previous node
+    Node *thisNode = StrList->head;  // Initiate a pointer to the StrList head's pointer   
+    Node *next = NULL;               // Initiate a variable to store a pointer to the next node
 
     while (thisNode != NULL) 
     {
@@ -451,8 +467,9 @@ void StrList_reverse(StrList* StrList)
         prev = thisNode;        // Update 'prev' to be the current node, moving it one step ahead for the next iteration
         thisNode = next;        // Move to the next node in the original list order
     }
+        
+        StrList->head = prev;      // After the loop, 'prev' will be the new head of the list
     
-    StrList->head = prev;      // After the loop, 'prev' will be the new head of the list
 }
 
 
@@ -530,6 +547,10 @@ int StrList_isSorted(StrList* StrList)
 /*This function creates a new string node*/
 Node* newNode(const char* data) 
 {
+    if(data == NULL)
+    {
+        return NULL;
+    }
     Node* newNode = (Node*)malloc(sizeof(Node)); // Allocate memory for the new node
     if (newNode == NULL)         // Check if memory allocation succeeded or not
     {

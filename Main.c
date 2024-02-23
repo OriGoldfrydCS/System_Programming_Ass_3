@@ -5,8 +5,17 @@
 
 int main() 
 {
-    StrList* StrList = StrList_alloc();  // Allocate memory for the user's story 
-    char words[300];                     // A buffer for the user's word or sentence input for his story
+    StrList* StrList = StrList_alloc();         // Allocate memory for the user's story 
+    int initialSize = 300;                      // An initial buffer for the user's word or sentence input for his story
+    char* buffer = (char*)malloc(initialSize);  // Allocate initial buffer
+    if (buffer == NULL) 
+    {
+        printf("Failed to allocate memory\n");
+        StrList_free(StrList);
+        return -1;
+    }
+    int bufferSize = initialSize;
+    char words[300];                     // In cases that the user requested to insert a word, allocate small size of memory
     int decision;                        // A variable for the user decision what option to choose in the menu
     
     printf("\n--------------------------------------------------------------");
@@ -32,21 +41,45 @@ int main()
     while(1) 
     {
         scanf("%d", &decision);
-        getchar(); 
+        getchar();      // Remove newLine character (if needed)
+
+        // Reset buffer
+        memset(buffer, 0, bufferSize);
         
-        // Handle the user's decision
         switch (decision) 
         {
             // (1) Build your story by inserting word or sentence at the end
             case 1:
+            
                 int numberOfWords;
+
                 scanf("%d", &numberOfWords);
-                for (int i = 0; i < numberOfWords; i++)
-                {
-                    scanf("%s", words);
-                    StrList_insertLast(StrList, words);
+                getchar();                              // Remove newLine character (if needed)
+
+                if (buffer[strlen(buffer) - 1] != '\n') // Handle the situation where the buffer is too small
+                { 
+                    int newSize = bufferSize * 2;       // Double the buffer size
+                    char* newBuffer = realloc(buffer, newSize);
+                    if (newBuffer == NULL) 
+                    {
+                        printf("Failed to expand the buffer.\n");
+                        break;
+                    }
+                    buffer = newBuffer;
+                    bufferSize = newSize;
+
+                    // Continue reading the input
+                    fgets(buffer + strlen(buffer), newSize - strlen(buffer), stdin);
+                    buffer[strcspn(buffer, "\n")] = 0;  // Remove newline character (if needed)
                 }
-                
+
+                // Use token to read the user input
+                char* token = strtok(buffer, " ");
+                while (token != NULL && numberOfWords-- > 0) 
+                {
+                    StrList_insertLast(StrList, token); // Insert each word as a separate node
+                    token = strtok(NULL, " ");
+                }
                 break;
 
             // (2) Insert your word or sentence at a spcific index
@@ -54,14 +87,32 @@ int main()
                 int index;
                 scanf("%d", &index);
                 getchar();                                  // Remove new line (if needed)
-                scanf("%300s", words);
-                getchar();                                  // Remove new line (if needed)
-                StrList_insertAt(StrList, words, index);
+                
+                memset(buffer, 0, bufferSize);              // Clear existing buffer content
+                
+                if (buffer[strlen(buffer) - 1] != '\n')     // Handle the situation where the buffer is too small
+                { 
+                    int newSize = bufferSize * 2;           // Double the buffer size
+                    char* newBuffer = realloc(buffer, newSize);
+                    if (newBuffer == NULL) 
+                    {
+                        printf("Failed to expand the buffer.\n");
+                        break;
+                    }
+                    buffer = newBuffer;
+                    bufferSize = newSize;
+
+                    // Continue reading the input
+                    fgets(buffer + strlen(buffer), newSize - strlen(buffer), stdin);
+                    buffer[strcspn(buffer, "\n")] = 0;          // Remove newline character (if needed)
+                    StrList_insertAt(StrList, buffer, index);   // Inserts a string at the specified index
+                }
                 break;
             
             // (3) Print your story
             case 3:
                 StrList_print(StrList);
+                // printf("\n");
                 break;
             
             // (4) Print length of your story
@@ -73,6 +124,7 @@ int main()
             case 5:
                 scanf("%d", &index);
                 printf("%s\n", StrList_getAtIndex(StrList, index));
+                // printf("\n");
                 break;
             
             // (6) Print the total number of characters in your story
@@ -84,9 +136,11 @@ int main()
             
             // (7) Count occurrences of a string in your story
             case 7:
-                scanf("%300s", words);
+                char str[100];
+                scanf("%s", str);
                 getchar();                                   // Remove new line (if needed)
-                int occurrences = StrList_count(StrList, words);
+                
+                int occurrences = StrList_count(StrList, str);
                 printf("%d\n", occurrences);
                 break;
             
@@ -106,6 +160,7 @@ int main()
             
             // (10) Reverse your story
             case 10:
+                free(buffer); 
                 StrList_reverse(StrList);
                 break;
             
@@ -135,12 +190,25 @@ int main()
             // (0) Exit the program
             case 0:
                 StrList_free(StrList);                       // Free the entire StrList  
-                printf("\n");
+                // printf("\n");
                 return 0;
             
             // Dafault case
             default:
                 printf("Invalid decision! Make another try...\n");
+        }
+
+        // Reset buffer to its initial size after each run if needed
+        if (bufferSize != initialSize) 
+        {
+            char* temp = realloc(buffer, initialSize);
+            if (temp == NULL) 
+            {
+                printf("Failed to reallocate buffer to the initial size.\n");
+                break; 
+            }
+            bufferSize = initialSize; // Ensure bufferSize is updated
+            memset(buffer, 0, bufferSize); // Clear the buffer after resizing
         }
     }
 
