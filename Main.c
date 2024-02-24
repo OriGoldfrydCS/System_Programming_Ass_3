@@ -42,27 +42,26 @@ int main()
     {
         scanf("%d", &decision);
         getchar();      // Remove newLine character (if needed)
-
-        // Reset buffer
-        memset(buffer, 0, bufferSize);
         
         switch (decision) 
         {
             // (1) Build your story by inserting word or sentence at the end
             case 1:
-            
+                
+                memset(buffer, 0, bufferSize);          // Ensure that buffer is empty
+
                 int numberOfWords;
 
                 scanf("%d", &numberOfWords);
                 getchar();                              // Remove newLine character (if needed)
 
-                if (buffer[strlen(buffer) - 1] != '\n') // Handle the situation where the buffer is too small
+                if (buffer[strlen(buffer)] != '\n') // Handle the situation where the buffer is too small
                 { 
                     int newSize = bufferSize * 2;       // Double the buffer size
                     char* newBuffer = realloc(buffer, newSize);
                     if (newBuffer == NULL) 
                     {
-                        printf("Failed to expand the buffer.\n");
+                        printf("Failed to resize buffer.\n");
                         break;
                     }
                     buffer = newBuffer;
@@ -86,33 +85,15 @@ int main()
             case 2:
                 int index;
                 scanf("%d", &index);
-                getchar();                                  // Remove new line (if needed)
-                
-                memset(buffer, 0, bufferSize);              // Clear existing buffer content
-                
-                if (buffer[strlen(buffer) - 1] != '\n')     // Handle the situation where the buffer is too small
-                { 
-                    int newSize = bufferSize * 2;           // Double the buffer size
-                    char* newBuffer = realloc(buffer, newSize);
-                    if (newBuffer == NULL) 
-                    {
-                        printf("Failed to expand the buffer.\n");
-                        break;
-                    }
-                    buffer = newBuffer;
-                    bufferSize = newSize;
-
-                    // Continue reading the input
-                    fgets(buffer + strlen(buffer), newSize - strlen(buffer), stdin);
-                    buffer[strcspn(buffer, "\n")] = 0;          // Remove newline character (if needed)
-                    StrList_insertAt(StrList, buffer, index);   // Inserts a string at the specified index
-                }
+                getchar();                                  // Remove newline (if needed)
+                scanf("%300s", words);
+                getchar();                                  // Remove newline (if needed)
+                StrList_insertAt(StrList, words, index);
                 break;
             
             // (3) Print your story
             case 3:
                 StrList_print(StrList);
-                // printf("\n");
                 break;
             
             // (4) Print length of your story
@@ -124,7 +105,6 @@ int main()
             case 5:
                 scanf("%d", &index);
                 printf("%s\n", StrList_getAtIndex(StrList, index));
-                // printf("\n");
                 break;
             
             // (6) Print the total number of characters in your story
@@ -138,7 +118,7 @@ int main()
             case 7:
                 char str[100];
                 scanf("%s", str);
-                getchar();                                   // Remove new line (if needed)
+                getchar();                                   // Remove newline (if needed)
                 
                 int occurrences = StrList_count(StrList, str);
                 printf("%d\n", occurrences);
@@ -147,20 +127,19 @@ int main()
             // Delete all occurrences of a string
             case 8:
                 scanf("%300s", words);
-                getchar();                                  // Remove new line (if needed)
+                getchar();                                  // Remove newline (if needed)
                 StrList_remove(StrList, words);
                 break;
             
             // (9) Delete string at a specific index
             case 9:
                 scanf("%d", &index);
-                getchar();                                  // Remove new line (if needed)
+                getchar();                                  // Remove newline (if needed)
                 StrList_removeAt(StrList, index);
                 break;
             
             // (10) Reverse your story
             case 10:
-                free(buffer); 
                 StrList_reverse(StrList);
                 break;
             
@@ -190,12 +169,11 @@ int main()
             // (0) Exit the program
             case 0:
                 StrList_free(StrList);                       // Free the entire StrList  
-                // printf("\n");
                 return 0;
             
             // Dafault case
             default:
-                printf("Invalid decision! Make another try...\n");
+                printf("Make another try...\n");
         }
 
         // Reset buffer to its initial size after each run if needed
@@ -204,13 +182,14 @@ int main()
             char* temp = realloc(buffer, initialSize);
             if (temp == NULL) 
             {
-                printf("Failed to reallocate buffer to the initial size.\n");
+                printf("Failed to reallocate to initial size.\n");
                 break; 
             }
+            buffer = temp;
             bufferSize = initialSize; // Ensure bufferSize is updated
             memset(buffer, 0, bufferSize); // Clear the buffer after resizing
         }
     }
-
+    free(buffer);           // Free buffer
     return 0;
 }

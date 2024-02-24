@@ -1,8 +1,8 @@
 # General macros
 CC = gcc
-FLAGS = -Wall 
+FLAGS = -Wall -g
 
-# Default target: compile all programs (means StrList)
+# Default target: compile all programs (StrList)
 all: StrList 
 
 # Program file compiling rules

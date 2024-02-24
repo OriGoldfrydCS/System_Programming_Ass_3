@@ -528,13 +528,13 @@ int StrList_isSorted(StrList* StrList)
     {
         if (strcmp(thisNode->data, thisNode->next->data) > 0)     // Compare to neighrhood nodes' data
         {
-            return 0;                 // Not sorted
+            return 0;                 // 0 -> Not sorted
         }
 
         thisNode = thisNode->next;    // Move the pointer to the next string node
     }
 
-    return 1;                         // Sorted
+    return 1;                         // 1 -> Sorted
 }
 
 

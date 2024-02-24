@@ -125,7 +125,7 @@ struct Node;
 typedef struct Node Node;
 
 /*
- * This function creates a new string node with contains data (string)
+ * This function creates a new string node
  */
 Node* newNode(const char* data);
 
